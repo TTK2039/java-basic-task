@@ -2,16 +2,48 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
   pageEncoding="UTF-8"%>
 <%
-        
-    // 残数の更新処理(残数の取得、更新、保存など)    
-    int totalNum = 25;  // 残数用の変数。仮で25をセットしている。必要に応じて変更
+	request.setCharacterEncoding("UTF-8");
+
+
+    String totalNumStr = (String) session.getAttribute("totalNum");
+    if (Utility.isNullOrEmpty(totalNumStr)){
+    	totalNumStr = "25";
+    }
+
+    int totalNum = Integer.parseInt(totalNumStr);
     
-    // プレイヤーの切替処理(プレイヤーの取得、切替、保存など)
-    String player = "A";  // プレイヤー用の変数。仮で"A"をセットしている。必要に応じて変更
+	String pickStr = request.getParameter("num");
+    if (Utility.isNullOrEmpty(pickStr)){
+    	pickStr = "0";
+    }
     
-    // 残数が0以下の場合、結果ページへ遷移
-    // (responseオブジェクトのsendRedirectメソッドを使用する)
+    int pick = Integer.parseInt(pickStr);
+
+    String player1 = "A";
+    String player2 = "B";
+
+ 	String playerName;
+     
+    playerName = (String)session.getAttribute("player");
+	if(Utility.isNullOrEmpty(playerName)){
+		playerName = player1;
+	}
+	int newNum = totalNum - pick;  
+	
+    if (newNum <= 0){
+    	response.sendRedirect("finish.jsp");
+    } else{
+    	if (playerName.equals(player1)){
+    		session.setAttribute("player", player2);
+    	}else {
+    		session.setAttribute("player", player1);
+    	}
+    }
+
+    String a = Utility.getStoneDisplayHtml(newNum);
     
+	String newNumStr = "" + newNum;
+    session.setAttribute("totalNum", newNumStr); 
 %>
 <!DOCTYPE html>
 <html>
@@ -25,25 +57,21 @@
 
   <div class="info">
     <h2>
-      残り：xx個
+      残り：<%= newNum %>個
     </h2>
     <p class="stone">
-      <%
-          // todo:このprint分は仮の処理。実装が完了したら削除する。
-          // 表示する文字列("●●～")をメソッドを使い取得し、取得した文字列を表示する
-          out.println("●●●●●●●●●●<br>●●●●●●●●●●<br>●●●●●");
-      %>
+      <%out.println(a);%>
     </p>
   </div>
   <div class="info">
     <h2>
-      プレイヤーxxの番
+      プレイヤー<%= playerName %>の番
     </h2>
 
     <form action="play.jsp">
       <p>
         石を
-        <input type="number" name="num" min="1" max="3">
+        <input type="number" name="num" min="1" max="3"  required>
         個取る<br> ※1度に3個取れます。
       </p>
       <button class="btn" type="submit">決定</button>

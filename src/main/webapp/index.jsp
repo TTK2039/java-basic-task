@@ -21,10 +21,12 @@
     </p>
     <p>
       1度に取れる石の数：<span>3個</span>
+      
     </p>
 
     <form action="play.jsp">
-      <button class="btn" type="submit">始める</button>
+      <button class	="btn" type="submit">始める</button>
+      
     </form>
   </div>
 </body>
